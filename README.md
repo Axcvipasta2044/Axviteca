@@ -1,49 +1,145 @@
-# Smart Aula — Biblioteca virtual gratuita
+# Smart Aula
 
-Plataforma para leer y compartir PDFs. **Explorar es gratis para todos**; solo hace falta cuenta para subir PDFs y guardar favoritos.
+> Biblioteca académica digital para organizar, consultar y compartir documentos educativos.
 
-## Corrección rápida de errores comunes
+Smart Aula es una plataforma web desarrollada para facilitar el acceso y la gestión de recursos académicos en formato digital. Permite explorar documentos, leer PDFs directamente desde el navegador, guardar contenido, organizarlo mediante colecciones y publicar nuevos documentos.
 
-### 1. Error al subir: `new row violates row-level security`
+El proyecto nació como una propuesta para centralizar materiales académicos que normalmente se encuentran dispersos entre carpetas, dispositivos y diferentes plataformas.
 
-En Supabase → **SQL Editor**, ejecuta el archivo `sql/fix-rls.sql`.
+---
 
-Luego cierra sesión, vuelve a entrar e intenta subir de nuevo.
+## Características
 
-### 2. Login con correo no funciona (Google sí)
+### Biblioteca digital
 
-En Supabase → **Authentication** → **Providers** → **Email**:
+- Exploración de documentos académicos.
+- Búsqueda de documentos.
+- Filtrado por categorías.
+- Visualización de información de cada documento.
+- Lectura de PDFs directamente desde el navegador.
+- Descarga de documentos.
 
-- Desactiva **Confirm email** (para desarrollo/producción simple), **o**
-- Confirma el correo que te llegó al registrarte antes de iniciar sesión.
+### Cuenta de usuario
 
-Usa el **mismo correo** al registrarte e iniciar sesión (minúsculas, sin espacios).
+- Registro e inicio de sesión.
+- Autenticación mediante correo electrónico.
+- Inicio de sesión con Google.
+- Recuperación de contraseña.
+- Perfil de usuario.
+- Avatar y biografía.
 
-### 3. Parece que no hay sesión iniciada
+### Organización personal
 
-Tras iniciar sesión, el botón del navbar debe mostrar tu nombre. Si no:
+- Guardar documentos como favoritos.
+- Crear y administrar colecciones.
+- Agregar documentos a colecciones.
+- Continuar la lectura desde el punto donde se dejó.
+- Registro del progreso de lectura.
 
-1. Revisa que `js/config.js` tenga URL y anon key correctos.
-2. En Supabase → **Authentication** → **URL Configuration**, añade tu dominio local y de Netlify.
+### Interacción
 
-## Configuración
+- Sistema de likes.
+- Comentarios en documentos.
+- Contador de visualizaciones.
+- Contador de descargas.
 
-1. Copia `js/config.example.js` → `js/config.js`
-2. Pega **Project URL** y **anon key** de Supabase
-3. Ejecuta `sql/schema.sql` y luego `sql/fix-rls.sql`
-4. Crea bucket Storage `pdfs` (público) con políticas de lectura/escritura para autenticados
-5. Abre con **Live Server** (no `file://`)
+### Publicación de documentos
 
-## Estructura
+Los usuarios autenticados pueden publicar documentos académicos en formato PDF.
 
-- `index.html` — Inicio público
-- `dashboard.html` — Biblioteca pública
-- `viewer.html` — Lector PDF público
-- `login.html` — Solo para subir/guardar
-- `upload.html` / `profile.html` — Requieren sesión
+Las funciones incluyen:
 
-## Stack
+- Subida de PDFs.
+- Información y descripción del documento.
+- Selección de categorías.
+- Edición de documentos.
+- Eliminación de documentos.
+- Control de visibilidad de documentos.
 
-HTML · CSS · JavaScript vanilla · Supabase · Netlify
+### Administración
 
-© Smart Aula
+La plataforma cuenta con un módulo de administración para gestionar:
+
+- Usuarios.
+- Documentos.
+- Categorías.
+- Información general de la plataforma.
+
+### PWA
+
+Smart Aula incorpora características de Progressive Web App (PWA), permitiendo una experiencia más cercana a una aplicación instalada.
+
+Incluye:
+
+- Web App Manifest.
+- Service Worker.
+- Página offline.
+- Iconos para dispositivos.
+- Instalación como aplicación compatible.
+
+### Interfaz
+
+La plataforma cuenta con una interfaz orientada a facilitar la navegación y lectura, incluyendo:
+
+- Diseño responsive.
+- Modo oscuro.
+- Categorías visuales.
+- Biblioteca de documentos.
+- Navegación adaptada a diferentes dispositivos.
+
+---
+
+## Tecnologías utilizadas
+
+### Frontend
+
+- HTML5
+- CSS3
+- JavaScript
+- PDF.js
+
+### Backend y servicios
+
+- Supabase
+- PostgreSQL
+- Supabase Authentication
+- Supabase Storage
+
+### Despliegue
+
+- Netlify
+- GitHub Pages para pruebas del frontend
+
+### Herramientas
+
+- Git
+- GitHub
+- Visual Studio Code
+
+---
+
+## Arquitectura
+
+Smart Aula utiliza una arquitectura basada en una aplicación web cliente conectada a servicios en la nube.
+
+```text
+                    +---------------------+
+                    |       Usuario       |
+                    +----------+----------+
+                               |
+                               v
+                    +---------------------+
+                    |   Smart Aula Web    |
+                    |     HTML/CSS/JS     |
+                    +----------+----------+
+                               |
+                 +-------------+-------------+
+                 |             |             |
+                 v             v             v
+          +-----------+ +-----------+ +-----------+
+          |   Auth    | | PostgreSQL| |  Storage  |
+          |  Supabase | |  Supabase | |  Supabase |
+          +-----------+ +-----------+ +-----------+
+                               |
+                               v
+                         Documentos PDF
