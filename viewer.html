@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <script>
+    // Aplica el tema guardado antes de pintar para evitar el destello blanco.
+    (function () {
+      try {
+        var theme = localStorage.getItem('smart-aula-theme') === 'dark' ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+        if (theme === 'dark') {
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', '#111827');
+        }
+      } catch (error) {}
+    })();
+  </script>
+  <meta name="application-name" content="Smart Aula">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Smart Aula">
+  <title>Lector — Smart Aula</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/pwa.css">
+  <script src="/js/pwa.js" defer></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body data-page="viewer" class="viewer-body">
+  <header class="viewer-toolbar">
+    <div class="viewer-toolbar__left">
+      <a href="dashboard.html" class="btn btn--ghost btn--icon" aria-label="Volver">←</a>
+      <span class="viewer-toolbar__title" id="viewer-title">Documento</span>
+    </div>
+    <div class="viewer-toolbar__center viewer-pager">
+      <button type="button" id="prev-page" class="btn btn--ghost btn--sm" aria-label="Página anterior">←</button>
+      <span class="text-sm"><span id="page-num">1</span> / <span id="page-count">1</span></span>
+      <button type="button" id="next-page" class="btn btn--ghost btn--sm" aria-label="Página siguiente">→</button>
+      <button type="button" id="zoom-out" class="btn btn--ghost btn--sm" aria-label="Alejar">−</button>
+      <button type="button" id="zoom-in" class="btn btn--ghost btn--sm" aria-label="Acercar">+</button>
+    </div>
+    <div class="viewer-toolbar__right">
+      <button id="viewer-sidebar-toggle" class="btn btn--ghost btn--icon" aria-label="Comentarios">
+        <i data-lucide="message-circle"></i>
+      </button>
+      <div class="viewer-actions">
+        <button type="button" id="viewer-more-toggle" class="btn btn--ghost btn--icon viewer-more-toggle" aria-label="Más acciones" aria-expanded="false" aria-controls="viewer-actions-menu">
+          <i data-lucide="more-vertical"></i>
+        </button>
+        <div id="viewer-actions-menu" class="viewer-actions__menu">
+          <button type="button" id="viewer-favorite" class="btn btn--ghost btn--sm" aria-label="Favorito">★</button>
+          <button type="button" id="viewer-collection" class="btn btn--secondary btn--sm">Colección</button>
+          <button type="button" id="viewer-like" class="btn btn--ghost btn--sm" aria-label="Me gusta">
+            <span>❤</span>
+            <span id="viewer-like-count" class="text-sm">0</span>
+          </button>
+          <button type="button" id="viewer-download" class="btn btn--secondary btn--sm" aria-label="Descargar">
+            <span>⬇</span>
+            <span class="viewer-action-label">Descargar</span>
+          </button>
+          <button type="button" id="viewer-fullscreen" class="btn btn--primary btn--sm">Pantalla completa</button>
+          <button type="button" id="viewer-edit" class="btn btn--secondary btn--sm hidden">Editar</button>
+          <button type="button" id="viewer-delete" class="btn btn--danger btn--sm hidden">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="viewer-main">
+    <div class="viewer-canvas"><canvas id="pdf-canvas"></canvas></div>
+    <aside class="viewer-sidebar">
+      <div class="viewer-sidebar__header">Comentarios</div>
+      <div class="viewer-sidebar__body"><div id="comments-list"></div></div>
+      <form id="comment-form" class="comment-form">
+        <textarea id="comment-input" class="input" rows="2" placeholder="Comentario…"></textarea>
+        <button type="submit" class="btn btn--primary btn--sm">Publicar</button>
+      </form>
+    </aside>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/viewer.js"></script>
+</body>
+</html>

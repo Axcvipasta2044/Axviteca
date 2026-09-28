@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Populares</title>
+  <desc id="desc">Libro abierto con tendencia ascendente</desc>
+  <rect width="64" height="64" rx="15" fill="#ecfdf5"/>
+  <path d="M10 18.5c0-2 1.8-3.5 3.7-3.1 7.1 1.2 13.2 3.7 18.3 7.5v28.5c-5.2-3.6-11.4-6-18.5-7.2-2-.3-3.5-2-3.5-4V18.5Z" fill="#fff" stroke="#047857" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M54 18.5c0-2-1.8-3.5-3.7-3.1-7.1 1.2-13.2 3.7-18.3 7.5v28.5c5.2-3.6 11.4-6 18.5-7.2 2-.3 3.5-2 3.5-4V18.5Z" fill="#fff" stroke="#047857" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="m38 37 5-5 4 3 7-8" fill="none" stroke="#f97316" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M48 27h6v6" fill="none" stroke="#f97316" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

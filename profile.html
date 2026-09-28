@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <script>
+    // Aplica el tema guardado antes de pintar para evitar el destello blanco.
+    (function () {
+      try {
+        var theme = localStorage.getItem('smart-aula-theme') === 'dark' ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+        if (theme === 'dark') {
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', '#111827');
+        }
+      } catch (error) {}
+    })();
+  </script>
+  <meta name="application-name" content="Smart Aula">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Smart Aula">
+  <title>Perfil - Smart Aula</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/pwa.css">
+  <script src="/js/pwa.js" defer></script>
+</head>
+<body data-page="profile">
+  <div class="app-layout">
+    <aside class="sidebar" aria-label="Menu">
+      <a href="index.html" class="sidebar__brand"><span class="navbar__logo">SA</span> Smart Aula</a>
+      <nav class="sidebar__nav">
+        <a href="dashboard.html?all=1" class="sidebar__link">Inicio</a>
+        <a href="profile.html" class="sidebar__link is-active">Perfil</a>
+      </nav>
+      <div class="sidebar__footer">
+        <button type="button" id="logout-btn" class="sidebar__logout btn btn--ghost btn--sm">Cerrar sesion</button>
+        <a href="profile.html" class="sidebar__user">
+          <span class="sidebar__avatar" id="profile-avatar">U</span>
+          <div><div class="sidebar__user-name" id="profile-name">-</div></div>
+        </a>
+      </div>
+    </aside>
+    <div class="sidebar-overlay"></div>
+    <div class="app-main">
+      <header class="topbar">
+        <div class="topbar__left">
+          <button type="button" class="topbar__menu-btn" aria-label="Menu">&#9776;</button>
+          <h1 class="topbar__title">Perfil</h1>
+        </div>
+        <div class="topbar__actions">
+          <button type="button" id="save-profile" class="btn btn--primary btn--sm">Guardar</button>
+        </div>
+      </header>
+      <div class="app-content">
+        <div class="profile-header">
+          <div class="profile-avatar profile-avatar--hero" id="profile-avatar-lg">U</div>
+          <div class="profile-info">
+            <h2 class="profile-info__name" id="profile-name-display">Usuario</h2>
+            <p class="profile-info__email" id="profile-email">-</p>
+            <p class="text-secondary profile-info__bio" id="profile-bio"></p>
+            <div class="profile-meta">
+              <div class="profile-meta__item"><strong id="profile-fav-count">0</strong><span>Favoritos</span></div>
+              <div class="profile-meta__item"><strong id="profile-upload-count">0</strong><span>Subidos</span></div>
+              <div class="profile-meta__item"><strong id="profile-joined">-</strong><span>Miembro</span></div>
+            </div>
+          </div>
+          <div class="card card--flat profile-editor">
+            <h3 class="h3">Editar</h3>
+            <div class="profile-photo-editor">
+              <div class="profile-avatar profile-avatar--editor" id="profile-avatar-edit">U</div>
+              <div class="profile-photo-editor__copy">
+                <div class="input-label">Foto de perfil</div>
+                <p class="text-muted">JPG, PNG o WebP. Se ajusta automaticamente antes de guardarse.</p>
+                <div class="profile-photo-editor__actions">
+                  <input id="edit-avatar" class="sr-only" type="file" accept="image/png,image/jpeg,image/webp">
+                  <button type="button" id="pick-avatar" class="btn btn--secondary btn--sm">Elegir foto</button>
+                  <button type="button" id="remove-avatar" class="btn btn--ghost btn--sm hidden">Quitar</button>
+                </div>
+              </div>
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="edit-name">Nombre</label>
+              <input id="edit-name" class="input">
+            </div>
+            <div class="input-group mt-md">
+              <label class="input-label" for="edit-bio">Bio</label>
+              <textarea id="edit-bio" class="input" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="tabs">
+          <button type="button" class="tab is-active" data-tab="uploaded">Mis subidas</button>
+          <button type="button" class="tab" data-tab="favorites">Favoritos</button>
+        </div>
+        <div id="profile-uploaded"></div>
+        <div id="profile-favorites" class="hidden"></div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>

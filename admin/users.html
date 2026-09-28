@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="application-name" content="Smart Aula">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Smart Aula">
+  <title>Gestion de usuarios - Admin Smart Aula</title>
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/pwa.css">
+  <script src="/js/pwa.js" defer></script>
+</head>
+<body>
+  <div class="admin-wrapper">
+    <aside class="admin-sidebar" id="admin-sidebar">
+      <div class="admin-sidebar__header">
+        <a href="../admin.html" class="admin-sidebar__logo">
+          <div class="admin-sidebar__logo-icon"><img src="../assets/icons/logo-smart-aula.svg" alt="Smart Aula"></div>
+          <span>Smart Aula</span>
+        </a>
+      </div>
+
+      <nav class="admin-sidebar__nav">
+        <li class="admin-sidebar__item">
+          <a href="../admin.html" class="admin-sidebar__link" data-page="dashboard">
+            <span class="admin-sidebar__icon">DB</span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="admin-sidebar__item">
+          <a href="users.html" class="admin-sidebar__link is-active" data-page="users">
+            <span class="admin-sidebar__icon">US</span>
+            <span>Usuarios</span>
+          </a>
+        </li>
+        <li class="admin-sidebar__item">
+          <a href="documents.html" class="admin-sidebar__link" data-page="documents">
+            <span class="admin-sidebar__icon">PDF</span>
+            <span>Documentos</span>
+          </a>
+        </li>
+        <li class="admin-sidebar__item">
+          <a href="categories.html" class="admin-sidebar__link" data-page="categories">
+            <span class="admin-sidebar__icon">CAT</span>
+            <span>Categorias</span>
+          </a>
+        </li>
+      </nav>
+
+      <div class="admin-sidebar__footer">
+        <div id="admin-user-card" class="admin-user-card">
+          <div class="admin-user-avatar" id="admin-avatar">AD</div>
+          <div class="admin-user-info">
+            <span class="admin-user-name" id="admin-username">Cargando...</span>
+            <span class="admin-user-role" id="admin-role-display">-</span>
+          </div>
+        </div>
+        <a href="../dashboard.html" id="admin-exit-btn" class="admin-btn admin-btn--secondary admin-btn--sm admin-btn--block">Volver al sitio</a>
+        <button class="admin-btn admin-btn--danger admin-btn--sm admin-btn--block" id="admin-logout-btn">Cerrar sesion</button>
+      </div>
+    </aside>
+
+    <div class="admin-overlay" id="admin-overlay"></div>
+
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <button type="button" class="admin-topbar__menu" id="admin-menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="admin-sidebar">
+          <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+        </button>
+        <h1 class="admin-topbar__title">Gestion de usuarios</h1>
+        <div class="admin-topbar__actions">
+          <div class="admin-search">
+            <span class="admin-search__icon"></span>
+            <input type="text" class="admin-search__input" id="search-users" placeholder="Buscar usuario por nombre o correo...">
+          </div>
+          <button class="admin-btn--icon" id="refresh-users" title="Actualizar" aria-label="Actualizar"></button>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div id="users-loading" class="admin-empty-state">
+          <div style="font-size: 32px; margin-bottom: 16px;">Cargando</div>
+          <p style="margin: 0;">Cargando usuarios...</p>
+        </div>
+
+        <div id="users-content" style="display: none;">
+          <div class="admin-toolbar">
+            <button class="admin-btn admin-btn--primary" data-filter="all">Todos</button>
+            <button class="admin-btn admin-btn--secondary" data-filter="admin">Admins</button>
+            <button class="admin-btn admin-btn--secondary" data-filter="banned">Baneados</button>
+          </div>
+
+          <div class="admin-card admin-card--table">
+            <div class="admin-card__header">
+              <div>
+                <h2 class="admin-card__title">Usuarios registrados</h2>
+                <p class="admin-card__subtitle" id="users-count">0 usuarios</p>
+              </div>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead class="admin-table__head">
+                  <tr>
+                    <th class="admin-table__cell" style="width: 28%;">Usuario</th>
+                    <th class="admin-table__cell" style="width: 24%;">Correo</th>
+                    <th class="admin-table__cell" style="width: 16%;">Rol</th>
+                    <th class="admin-table__cell" style="width: 14%;">Estado</th>
+                    <th class="admin-table__cell" style="width: 18%;">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="users-tbody">
+                  <tr class="admin-table__row">
+                    <td class="admin-table__data admin-empty-state" colspan="5">Sin usuarios</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="modal-role" class="admin-modal-overlay" style="display: none;">
+    <div class="admin-modal">
+      <div class="admin-modal__header">
+        <h2 class="admin-modal__title">Cambiar rol</h2>
+        <button class="admin-modal__close" onclick="closeRoleModal()">x</button>
+      </div>
+      <div class="admin-modal__body">
+        <div class="admin-form-group">
+          <label class="admin-label">Nuevo rol</label>
+          <select id="role-select" class="admin-select">
+            <option value="user">Usuario normal</option>
+            <option value="admin">Admin</option>
+            <option value="superadmin">Superadmin</option>
+          </select>
+          <p style="font-size: 12px; color: #6b7280; margin-top: 8px;">
+            Solo el superadmin puede cambiar roles. Los cambios se registran en auditoria.
+          </p>
+        </div>
+      </div>
+      <div class="admin-modal__footer">
+        <button class="admin-btn admin-btn--secondary" onclick="closeRoleModal()">Cancelar</button>
+        <button class="admin-btn admin-btn--primary" id="confirm-role-change">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-ban" class="admin-modal-overlay" style="display: none;">
+    <div class="admin-modal">
+      <div class="admin-modal__header">
+        <h2 class="admin-modal__title">Banear usuario</h2>
+        <button class="admin-modal__close" onclick="closeBanModal()">x</button>
+      </div>
+      <div class="admin-modal__body">
+        <div class="admin-form-group">
+          <label class="admin-label">Razon del ban</label>
+          <textarea id="ban-reason" class="admin-textarea" placeholder="Describe por que este usuario esta siendo baneado..."></textarea>
+        </div>
+      </div>
+      <div class="admin-modal__footer">
+        <button class="admin-btn admin-btn--secondary" onclick="closeBanModal()">Cancelar</button>
+        <button class="admin-btn admin-btn--danger" id="confirm-ban">Banear usuario</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/supabase.js"></script>
+  <script src="../js/admin.js"></script>
+
+  <script>
+    let allUsers = [];
+    let filteredUsers = [];
+    let currentFilter = 'all';
+    let selectedUserId = null;
+    let isSuperAdmin = false;
+
+    async function initUsersPage() {
+      const hasAccess = await SmartAdmin.init();
+      if (!hasAccess) return;
+
+      isSuperAdmin = SmartAdmin.isSuperAdmin();
+
+      const user = SmartAdmin.getCurrentUser();
+      const profile = await SmartDB.getProfile(user.id);
+      SmartAdmin.hydrateChrome(profile, {
+        roleLabel: SmartAdmin.isSuperAdmin() ? 'Superadmin' : 'Admin',
+      });
+
+      await loadUsers();
+
+      document.getElementById('refresh-users').addEventListener('click', loadUsers);
+      document.getElementById('search-users').addEventListener('input', filterUsers);
+
+      document.querySelectorAll('[data-filter]').forEach((btn) => {
+        btn.addEventListener('click', (event) => {
+          document.querySelectorAll('[data-filter]').forEach((button) => {
+            button.classList.remove('admin-btn--primary');
+            button.classList.add('admin-btn--secondary');
+          });
+          event.currentTarget.classList.remove('admin-btn--secondary');
+          event.currentTarget.classList.add('admin-btn--primary');
+          currentFilter = event.currentTarget.dataset.filter;
+          filterUsers();
+        });
+      });
+
+      document.getElementById('admin-logout-btn').addEventListener('click', () => {
+        SmartAdmin.logout();
+      });
+
+      document.getElementById('admin-exit-btn')?.addEventListener('click', (event) => {
+        event.preventDefault();
+        window.location.href = '../dashboard.html';
+      });
+
+      document.querySelector('[data-filter="all"]').classList.add('admin-btn--primary');
+      document.querySelector('[data-filter="all"]').classList.remove('admin-btn--secondary');
+    }
+
+    async function loadUsers() {
+      try {
+        document.getElementById('users-loading').style.display = 'flex';
+        document.getElementById('users-content').style.display = 'none';
+
+        allUsers = await SmartAdmin.getUsers();
+        filteredUsers = allUsers;
+
+        renderUsers();
+
+        document.getElementById('users-loading').style.display = 'none';
+        document.getElementById('users-content').style.display = 'block';
+      } catch (err) {
+        console.error('Error loading users:', err);
+        SmartAdmin.showError('Error al cargar usuarios');
+      }
+    }
+
+    function filterUsers() {
+      const searchTerm = document.getElementById('search-users').value.toLowerCase();
+
+      filteredUsers = allUsers.filter((user) => {
+        const matchesSearch = !searchTerm ||
+          (user.username && user.username.toLowerCase().includes(searchTerm)) ||
+          (user.email && user.email.toLowerCase().includes(searchTerm));
+
+        if (currentFilter === 'admin') {
+          return matchesSearch && (user.role === 'admin' || user.role === 'superadmin');
+        }
+        if (currentFilter === 'banned') {
+          return matchesSearch && user.is_banned;
+        }
+        return matchesSearch;
+      });
+
+      renderUsers();
+    }
+
+    function renderUsers() {
+      const tbody = document.getElementById('users-tbody');
+      const count = document.getElementById('users-count');
+
+      count.textContent = `${filteredUsers.length} usuario${filteredUsers.length !== 1 ? 's' : ''}`;
+
+      if (filteredUsers.length === 0) {
+        tbody.innerHTML = `
+          <tr class="admin-table__row">
+            <td class="admin-table__data admin-empty-state" colspan="5">No se encontraron usuarios</td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filteredUsers.map((user) => {
+        const rowClass = user.is_banned ? 'is-banned' : '';
+        const statusBadge = user.is_banned
+          ? '<span class="admin-badge admin-badge--danger">Baneado</span>'
+          : '<span class="admin-badge admin-badge--success">Activo</span>';
+
+        const roleBadge = {
+          superadmin: '<span class="admin-badge admin-badge--danger">Superadmin</span>',
+          admin: '<span class="admin-badge admin-badge--primary">Admin</span>',
+          user: '<span class="admin-badge admin-badge--secondary">Usuario</span>',
+        }[user.role] || '<span class="admin-badge admin-badge--secondary">Usuario</span>';
+
+        const displayName = user.username || user.email || 'Usuario';
+        const email = user.email || '-';
+
+        return `
+          <tr class="admin-table__row ${rowClass}">
+            <td class="admin-table__data">
+              <div class="admin-user-cell">
+                <div class="admin-user-cell__avatar">${SmartAdmin.avatarMarkup(user, displayName)}</div>
+                <div class="admin-user-cell__meta">
+                  <div class="admin-user-cell__name">${displayName}</div>
+                  <span class="admin-user-cell__sub">${email}</span>
+                </div>
+              </div>
+            </td>
+            <td class="admin-table__data">${email}</td>
+            <td class="admin-table__data">${roleBadge}</td>
+            <td class="admin-table__data">${statusBadge}</td>
+            <td class="admin-table__data">
+              <div class="admin-inline-actions">
+                ${isSuperAdmin ? `<button class="admin-btn admin-btn--sm admin-btn--secondary" onclick="openRoleModal('${user.id}')">Rol</button>` : ''}
+                ${!user.is_banned ? `<button class="admin-btn admin-btn--sm admin-btn--warning" onclick="openBanModal('${user.id}')">Ban</button>` : `<button class="admin-btn admin-btn--sm admin-btn--success" onclick="unbanUser('${user.id}')">Desban</button>`}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openRoleModal(userId) {
+      if (!isSuperAdmin) {
+        SmartAdmin.showError('Solo el superadmin puede cambiar roles');
+        return;
+      }
+      selectedUserId = userId;
+      document.getElementById('modal-role').style.display = 'flex';
+    }
+
+    function closeRoleModal() {
+      document.getElementById('modal-role').style.display = 'none';
+      selectedUserId = null;
+    }
+
+    document.getElementById('confirm-role-change').addEventListener('click', async () => {
+      if (!selectedUserId) return;
+      const newRole = document.getElementById('role-select').value;
+
+      try {
+        await SmartAdmin.changeUserRole(selectedUserId, newRole);
+        await loadUsers();
+        closeRoleModal();
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    });
+
+    function openBanModal(userId) {
+      selectedUserId = userId;
+      document.getElementById('ban-reason').value = '';
+      document.getElementById('modal-ban').style.display = 'flex';
+    }
+
+    function closeBanModal() {
+      document.getElementById('modal-ban').style.display = 'none';
+      selectedUserId = null;
+    }
+
+    document.getElementById('confirm-ban').addEventListener('click', async () => {
+      if (!selectedUserId) return;
+      const reason = document.getElementById('ban-reason').value.trim();
+
+      if (!reason) {
+        SmartAdmin.showError('Debes ingresar una razon');
+        return;
+      }
+
+      try {
+        await SmartAdmin.banUser(selectedUserId, reason);
+        await loadUsers();
+        closeBanModal();
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    });
+
+    async function unbanUser(userId) {
+      try {
+        await SmartAdmin.unbanUser(userId);
+        await loadUsers();
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    }
+
+    initUsersPage();
+  </script>
+</body>
+</html>

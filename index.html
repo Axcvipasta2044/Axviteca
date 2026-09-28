@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <script>
+    // Aplica el tema guardado antes de pintar para evitar el destello blanco.
+    (function () {
+      try {
+        var theme = localStorage.getItem('smart-aula-theme') === 'dark' ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+        if (theme === 'dark') {
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', '#111827');
+        }
+      } catch (error) {}
+    })();
+  </script>
+  <meta name="application-name" content="Smart Aula">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Smart Aula">
+  <meta name="description" content="Smart Aula — Biblioteca virtual gratuita. Lee y comparte PDFs educativos.">
+  <title>Smart Aula — Biblioteca Virtual Gratuita</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="assets/icons/logo-smart-aula.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/pwa.css">
+  <script src="/js/pwa.js" defer></script>
+</head>
+<body data-page="home">
+
+  <header class="navbar">
+    <div class="navbar__inner">
+      <a href="index.html" class="navbar__brand">
+        <span class="navbar__logo">SA</span>
+        Smart Aula
+      </a>
+      <nav class="navbar__nav" aria-label="Principal">
+        <a href="dashboard.html?all=1" class="navbar__link">Explorar</a>
+        <a href="dashboard.html?all=1" class="navbar__link">Biblioteca</a>
+        <a href="categories.html" class="navbar__link">Categorías</a>
+        <a href="collections.html" class="navbar__link">Colecciones</a>
+        <a href="upload.html" class="navbar__link">Subir</a>
+      </nav>
+      <div class="navbar__actions">
+        <a href="login.html" id="nav-login" class="btn btn--ghost">Ingresar</a>
+        <a href="upload.html" id="nav-upload" class="btn btn--primary">Subir PDF</a>
+        <button type="button" class="navbar__toggle" aria-label="Menú" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="navbar__mobile">
+        <a href="dashboard.html?all=1">Explorar</a>
+        <a href="dashboard.html?all=1">Biblioteca</a>
+        <a href="categories.html">Categorías</a>
+        <a href="collections.html">Colecciones</a>
+        <a href="upload.html">Subir PDF</a>
+        <a href="login.html" id="nav-login-mobile">Ingresar</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero__grid">
+          <div class="hero__content">
+            <span class="hero__badge">Gratis para todos · Acceso abierto</span>
+            <h1 class="hero__title">Aprende y comparte.<br>Smart Aula.</h1>
+            <p class="hero__subtitle">Biblioteca virtual para leer y publicar PDFs sin costo. Explora, busca y estudia desde cualquier dispositivo.</p>
+            <div class="searchbar searchbar--hero" role="search">
+              <span class="searchbar__icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" />
+                  <line x1="16.5" y1="16.5" x2="21" y2="21" />
+                </svg>
+              </span>
+              <input type="search" id="hero-search" class="searchbar__input" placeholder="Buscar documentos…">
+              <button type="button" id="hero-search-btn" class="btn btn--primary">Buscar</button>
+            </div>
+            <div class="hero__actions">
+              <a href="dashboard.html?all=1" class="btn btn--primary btn--lg">Explorar biblioteca</a>
+              <a href="login.html" id="hero-auth" class="btn btn--secondary btn--lg">Ingresar / Subir</a>
+            </div>
+          </div>
+          <div class="hero__visual" aria-hidden="true">
+            <img src="assets/illustrations/hero-books.svg" alt="" width="500" height="400">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="h2">Categorías</h2>
+        <p class="text-secondary mt-md">Todo el contenido es público</p>
+        <div id="categories" class="category-grid"></div>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="container">
+        <div class="section-header section-header--editorial">
+          <div class="section-heading">
+            <img class="section-heading__logo" src="assets/icons/section-recent.svg" alt="" width="56" height="56" aria-hidden="true">
+            <div class="section-heading__copy">
+              <span class="section-kicker">Novedades</span>
+              <h2 class="h2">Recientes</h2>
+              <p class="section-heading__description">Los últimos documentos agregados a la biblioteca</p>
+            </div>
+          </div>
+          <a href="dashboard.html?all=1" id="view-all-link" class="btn btn--ghost btn--sm">Ver todos</a>
+        </div>
+        <div id="recent-pdfs"></div>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="container">
+        <div class="section-header section-header--editorial">
+          <div class="section-heading">
+            <img class="section-heading__logo" src="assets/icons/section-popular.svg" alt="" width="56" height="56" aria-hidden="true">
+            <div class="section-heading__copy">
+              <span class="section-kicker">Más consultados</span>
+              <h2 class="h2">Populares</h2>
+              <p class="section-heading__description">Los más leídos por la comunidad</p>
+            </div>
+          </div>
+        </div>
+        <div id="popular-pdfs"></div>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="container">
+        <div class="section-header section-header--editorial">
+          <div class="section-heading">
+            <img class="section-heading__logo" src="assets/icons/section-categories.svg" alt="" width="56" height="56" aria-hidden="true">
+            <div class="section-heading__copy">
+              <span class="section-kicker">Biblioteca temática</span>
+              <h2 class="h2">Por categorías</h2>
+              <p class="section-heading__description">Explora documentos agrupados por tema</p>
+            </div>
+          </div>
+        </div>
+        <div id="category-pdfs"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__grid">
+      <div class="footer__brand-block">
+        <a href="index.html" class="footer__brand">
+          <span class="navbar__logo">SA</span>
+          <span>Smart Aula</span>
+        </a>
+        <p class="footer__description">Biblioteca abierta para estudiantes que quieren leer, compartir y descubrir PDFs educativos desde cualquier dispositivo.</p>
+      </div>
+
+      <nav class="footer__group" aria-label="Enlaces rapidos">
+        <h2 class="footer__title">Explorar</h2>
+        <a href="dashboard.html?all=1" class="footer__link">Biblioteca</a>
+        <a href="dashboard.html?all=1" class="footer__link">Todos los PDFs</a>
+        <a href="upload.html" class="footer__link">Subir PDF</a>
+      </nav>
+
+      <nav class="footer__group" aria-label="Redes sociales">
+        <h2 class="footer__title">Redes</h2>
+        <a href="https://wa.me/51936997623" class="footer__link">WhatsApp</a>
+        <a href="https://www.tiktok.com/@axcvi_pasta" class="footer__link">TikTok</a>
+        <a href="https://www.facebook.com/carlosstip.manuyamaalvarado?locale=es_LA" class="footer__link">Facebook</a>
+      </nav>
+
+      <div class="footer__group">
+        <h2 class="footer__title">Plataforma</h2>
+        <p class="footer__text">Acceso gratuito</p>
+        <p class="footer__text">Lectura en navegador</p>
+        <p class="footer__text">Favoritos y progreso</p>
+      </div>
+      <p class="text-muted text-sm">© 2026 Smart Aula · Biblioteca gratuita</p>
+    </div>
+    <div class="container footer__bottom">
+      <p>&copy; 2026 Smart Aula. Biblioteca gratuita para aprender y compartir.</p>
+      <p>Hecho para estudiantes, docentes y comunidades educativas.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    SmartDB.whenReady.then(async () => {
+      const user = await SmartAuth.getUser();
+      if (user) { 
+        const profile = await SmartDB.getProfile(user.id);
+        if (profile?.role === 'admin' || profile?.role === 'superadmin') {
+          document.getElementById('nav-admin')?.style.setProperty('display', '', 'important');
+          document.getElementById('nav-admin')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'admin.html';
+          });
+        }
+      }
+    });
+  </script>
+</body>
+</html>

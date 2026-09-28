@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <script>
+    // Aplica el tema guardado antes de pintar para evitar el destello blanco.
+    (function () {
+      try {
+        var theme = localStorage.getItem('smart-aula-theme') === 'dark' ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+        if (theme === 'dark') {
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', '#111827');
+        }
+      } catch (error) {}
+    })();
+  </script>
+  <meta name="application-name" content="Smart Aula">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Smart Aula">
+  <title>Subir PDF - Smart Aula</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/pwa.css">
+  <script src="/js/pwa.js" defer></script>
+</head>
+<body data-page="upload">
+  <div class="app-layout">
+    <aside class="sidebar">
+      <a href="index.html" class="sidebar__brand"><span class="navbar__logo">SA</span> Smart Aula</a>
+      <nav class="sidebar__nav">
+        <a href="dashboard.html" class="sidebar__link">Inicio</a>
+        <a href="upload.html" class="sidebar__link is-active">Subir PDF</a>
+        <a href="profile.html" class="sidebar__link">Perfil</a>
+      </nav>
+      <div class="sidebar__footer">
+        <button type="button" id="logout-btn" class="sidebar__logout btn btn--ghost btn--sm">Cerrar sesion</button>
+        <a href="profile.html" class="sidebar__user"><span class="sidebar__avatar">?</span><div><div class="sidebar__user-name">Usuario</div></div></a>
+      </div>
+    </aside>
+    <div class="sidebar-overlay"></div>
+    <div class="app-main">
+      <header class="topbar">
+        <div class="topbar__left"><button type="button" class="topbar__menu-btn" aria-label="Menu">&#9776;</button><h1 class="topbar__title">Subir PDF</h1></div>
+      </header>
+      <div class="app-content">
+        <div id="upload-zone" class="upload-zone" tabindex="0">
+          <p class="upload-zone__title">Suelta tu archivo aqui</p>
+          <p class="text-muted text-sm">Max. 25 MB</p>
+          <input type="file" id="file-input" accept="application/pdf,application/rtf,text/plain,.pdf,.rtf,.txt" class="sr-only">
+        </div>
+        <div id="upload-preview" class="upload-preview">
+          <strong id="preview-name"></strong>
+          <p id="preview-size" class="text-sm text-muted"></p>
+          <canvas id="preview-canvas" class="upload-preview__canvas"></canvas>
+        </div>
+        <form id="upload-form" class="upload-form">
+          <div class="input-group"><label class="input-label">Titulo</label><input name="title" class="input" required></div>
+          <div class="input-group">
+            <label class="input-label">Categorias</label>
+            <div id="upload-categories-pills" class="category-pills-wrapper" style="margin-bottom:0.5rem"></div>
+            <select name="categories" class="input input--multi" multiple size="4" style="display:none"><option>General</option></select>
+            <p class="text-muted text-sm">Puedes elegir una o varias categorias.</p>
+          </div>
+          <div class="input-group"><label class="input-label">Descripcion</label><textarea name="description" class="input" rows="3"></textarea></div>
+          <div class="input-group">
+            <label class="input-label">Visibilidad</label>
+            <label class="toggle">
+              <input type="checkbox" name="is_public" checked>
+              <span class="toggle__slider"></span>
+              <span class="toggle__label">Publico</span>
+            </label>
+            <p class="text-xs text-muted" style="margin-top:4px">Si el PDF es privado, solo tu podras verlo y no aparecera en colecciones compartidas.</p>
+          </div>
+          <button type="submit" id="upload-submit" class="btn btn--primary">Publicar en Smart Aula</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/upload.js"></script>
+</body>
+</html>

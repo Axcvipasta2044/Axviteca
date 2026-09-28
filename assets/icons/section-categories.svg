@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Por categorías</title>
+  <desc id="desc">Cuadrícula de temas educativos</desc>
+  <rect width="64" height="64" rx="15" fill="#f8fafc"/>
+  <rect x="10" y="10" width="20" height="20" rx="6" fill="#2563eb"/>
+  <rect x="34" y="10" width="20" height="20" rx="6" fill="#fff" stroke="#7c3aed" stroke-width="2.5"/>
+  <rect x="10" y="34" width="20" height="20" rx="6" fill="#fff" stroke="#059669" stroke-width="2.5"/>
+  <rect x="34" y="34" width="20" height="20" rx="6" fill="#fff7ed" stroke="#f97316" stroke-width="2.5"/>
+  <path d="M16 20h8M20 16v8" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="44" cy="20" r="4" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+  <path d="M16 46c2.5-5 5.5-5 8 0" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M40 48V40M44 48V44M48 48V38" stroke="#f97316" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

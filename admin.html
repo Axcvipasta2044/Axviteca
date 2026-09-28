@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <script>
+    // Aplica el tema guardado antes de pintar para evitar el destello blanco.
+    (function () {
+      try {
+        var theme = localStorage.getItem('smart-aula-theme') === 'dark' ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+        if (theme === 'dark') {
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', '#111827');
+        }
+      } catch (error) {}
+    })();
+  </script>
+  <meta name="application-name" content="Smart Aula">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Smart Aula">
+  <title>Admin Dashboard - Smart Aula</title>
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/pwa.css">
+  <script src="/js/pwa.js" defer></script>
+</head>
+<body>
+  <div class="admin-wrapper">
+    <aside class="admin-sidebar" id="admin-sidebar">
+      <div class="admin-sidebar__header">
+        <a href="admin.html" class="admin-sidebar__logo">
+          <div class="admin-sidebar__logo-icon"><img src="assets/icons/logo-smart-aula.svg" alt="Smart Aula"></div>
+          <span>Smart Aula</span>
+        </a>
+      </div>
+
+      <nav class="admin-sidebar__nav">
+        <li class="admin-sidebar__item">
+          <a href="admin.html" class="admin-sidebar__link is-active" data-page="dashboard">
+            <span class="admin-sidebar__icon">DB</span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="admin-sidebar__item">
+          <a href="admin/users.html" class="admin-sidebar__link" data-page="users">
+            <span class="admin-sidebar__icon">US</span>
+            <span>Usuarios</span>
+          </a>
+        </li>
+        <li class="admin-sidebar__item">
+          <a href="admin/documents.html" class="admin-sidebar__link" data-page="documents">
+            <span class="admin-sidebar__icon">PDF</span>
+            <span>Documentos</span>
+          </a>
+        </li>
+        <li class="admin-sidebar__item">
+          <a href="admin/categories.html" class="admin-sidebar__link" data-page="categories">
+            <span class="admin-sidebar__icon">CAT</span>
+            <span>Categorias</span>
+          </a>
+        </li>
+        <li class="admin-sidebar__item">
+          <a href="#" class="admin-sidebar__link" data-page="logs">
+            <span class="admin-sidebar__icon">LOG</span>
+            <span>Auditoria</span>
+          </a>
+        </li>
+      </nav>
+
+      <div class="admin-sidebar__footer">
+        <div id="admin-user-card" class="admin-user-card">
+          <div class="admin-user-avatar" id="admin-avatar">AD</div>
+          <div class="admin-user-info">
+            <span class="admin-user-name" id="admin-username">Cargando...</span>
+            <span class="admin-user-role" id="admin-role-display">-</span>
+          </div>
+        </div>
+        <a href="dashboard.html" id="admin-exit-btn" class="admin-btn admin-btn--secondary admin-btn--sm admin-btn--block">Volver al sitio</a>
+        <button class="admin-btn admin-btn--danger admin-btn--sm admin-btn--block" id="admin-logout-btn">Cerrar sesion</button>
+      </div>
+    </aside>
+
+    <div class="admin-overlay" id="admin-overlay"></div>
+
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <button type="button" class="admin-topbar__menu" id="admin-menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="admin-sidebar">
+          <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+        </button>
+        <h1 class="admin-topbar__title">Dashboard</h1>
+        <div class="admin-topbar__actions">
+          <div class="admin-search">
+            <span class="admin-search__icon"></span>
+            <input type="text" class="admin-search__input" placeholder="Buscar...">
+          </div>
+          <button class="admin-btn--icon" title="Actualizar" aria-label="Actualizar"></button>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div id="admin-loading" class="admin-empty-state">
+          <div style="font-size: 32px; margin-bottom: 16px;">Cargando</div>
+          <p style="margin: 0;">Cargando dashboard...</p>
+        </div>
+
+        <div id="admin-dashboard" style="display: none;">
+          <div class="admin-stats">
+            <div class="admin-stat-card">
+              <div class="admin-stat-card__icon"></div>
+              <div class="admin-stat-card__label">Total Usuarios</div>
+              <div class="admin-stat-card__value" id="stat-users">0</div>
+              <div class="admin-stat-card__change admin-stat-card__change--positive" id="stat-users-change">-</div>
+            </div>
+
+            <div class="admin-stat-card">
+              <div class="admin-stat-card__icon"></div>
+              <div class="admin-stat-card__label">Usuarios Baneados</div>
+              <div class="admin-stat-card__value" id="stat-banned">0</div>
+              <div class="admin-stat-card__change admin-stat-card__change--negative" id="stat-banned-change">Requiere atencion</div>
+            </div>
+
+            <div class="admin-stat-card">
+              <div class="admin-stat-card__icon"></div>
+              <div class="admin-stat-card__label">Total Documentos</div>
+              <div class="admin-stat-card__value" id="stat-docs">0</div>
+              <div class="admin-stat-card__change admin-stat-card__change--positive" id="stat-docs-change">-</div>
+            </div>
+
+            <div class="admin-stat-card">
+              <div class="admin-stat-card__icon"></div>
+              <div class="admin-stat-card__label">Documentos Marcados</div>
+              <div class="admin-stat-card__value" id="stat-flagged">0</div>
+              <div class="admin-stat-card__change admin-stat-card__change--negative" id="stat-flagged-change">Pendiente de moderacion</div>
+            </div>
+
+            <div class="admin-stat-card">
+              <div class="admin-stat-card__icon"></div>
+              <div class="admin-stat-card__label">Total Comentarios</div>
+              <div class="admin-stat-card__value" id="stat-comments">0</div>
+              <div class="admin-stat-card__change admin-stat-card__change--positive" id="stat-comments-change">-</div>
+            </div>
+
+            <div class="admin-stat-card">
+              <div class="admin-stat-card__icon"></div>
+              <div class="admin-stat-card__label">Reportes Pendientes</div>
+              <div class="admin-stat-card__value" id="stat-reports">0</div>
+              <div class="admin-stat-card__change admin-stat-card__change--warning" id="stat-reports-change">Revisar</div>
+            </div>
+          </div>
+
+          <div class="admin-card" style="margin-bottom: 24px;">
+            <div class="admin-card__header">
+              <div>
+                <h2 class="admin-card__title">Equipo de Administracion</h2>
+                <p class="admin-card__subtitle">Admins y superadmins activos</p>
+              </div>
+              <div id="admin-count-display" style="font-size: 24px; font-weight: 700; color: #3b82f6;">0</div>
+            </div>
+            <div id="admin-list" class="admin-dashboard-team"></div>
+          </div>
+
+          <div class="admin-card admin-card--table">
+            <div class="admin-card__header">
+              <div>
+                <h2 class="admin-card__title">Actividad Reciente</h2>
+                <p class="admin-card__subtitle">Ultimas acciones del equipo admin</p>
+              </div>
+              <a href="#" class="admin-btn admin-btn--secondary admin-btn--sm" id="view-all-logs">Ver todo</a>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead class="admin-table__head">
+                  <tr>
+                    <th class="admin-table__cell" style="width: 40%;">Accion</th>
+                    <th class="admin-table__cell" style="width: 25%;">Admin</th>
+                    <th class="admin-table__cell" style="width: 25%;">Objetivo</th>
+                    <th class="admin-table__cell" style="width: 10%;">Fecha</th>
+                  </tr>
+                </thead>
+                <tbody id="audit-logs-tbody">
+                  <tr class="admin-table__row">
+                    <td class="admin-table__data admin-empty-state" colspan="4">Cargando actividad...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/admin.js"></script>
+
+  <script>
+    (async function initAdminDashboard() {
+      const hasAccess = await SmartAdmin.init();
+      if (!hasAccess) return;
+
+      const user = SmartAdmin.getCurrentUser();
+      const role = SmartAdmin.getRole();
+      const profile = await SmartDB.getProfile(user.id);
+      SmartAdmin.hydrateChrome(profile, { roleLabel: role === 'superadmin' ? 'Superadmin' : 'Admin' });
+
+      async function loadDashboard() {
+        try {
+          document.getElementById('admin-loading').style.display = 'flex';
+          document.getElementById('admin-dashboard').style.display = 'none';
+
+          const stats = await SmartAdmin.loadStats();
+          const adminUsers = await SmartAdmin.getUsers('admin');
+          const superAdminUsers = await SmartAdmin.getUsers('superadmin');
+          const auditLogs = await SmartAdmin.getAuditLogs(5);
+
+          if (stats) {
+            document.getElementById('stat-users').textContent = stats.total_users || 0;
+            document.getElementById('stat-banned').textContent = stats.banned_users || 0;
+            document.getElementById('stat-docs').textContent = stats.total_documents || 0;
+            document.getElementById('stat-flagged').textContent = stats.flagged_documents || 0;
+            document.getElementById('stat-comments').textContent = stats.total_comments || 0;
+            document.getElementById('stat-reports').textContent = stats.pending_reports || 0;
+            document.getElementById('admin-count-display').textContent = stats.admin_count || 0;
+          }
+
+          const allAdmins = [...(adminUsers || []), ...(superAdminUsers || [])];
+          const adminListEl = document.getElementById('admin-list');
+          if (allAdmins.length === 0) {
+            adminListEl.innerHTML = '<p class="admin-empty-state" style="grid-column: 1/-1;">No hay admins</p>';
+          } else {
+            adminListEl.innerHTML = allAdmins.map((admin) => `
+              <div class="admin-team-member">
+                <div class="admin-team-member__avatar">${SmartAdmin.avatarMarkup(admin, admin.username || admin.email)}</div>
+                <div class="admin-team-member__name">${admin.username || admin.email}</div>
+                <span class="admin-badge ${SmartAdmin.getBadgeClass(admin.role)}">${admin.role === 'superadmin' ? 'Super' : 'Admin'}</span>
+              </div>
+            `).join('');
+          }
+
+          const auditTbody = document.getElementById('audit-logs-tbody');
+          if (auditLogs.length === 0) {
+            auditTbody.innerHTML = `
+              <tr class="admin-table__row">
+                <td class="admin-table__data admin-empty-state" colspan="4">Sin actividad reciente</td>
+              </tr>
+            `;
+          } else {
+            auditTbody.innerHTML = auditLogs.map((log) => {
+              const actionLabel = {
+                created: 'Creado',
+                updated: 'Actualizado',
+                deleted: 'Eliminado',
+                banned: 'Baneado',
+                role_changed: 'Rol cambiado',
+                moderated: 'Moderado'
+              }[log.action] || log.action;
+
+              return `
+                <tr class="admin-table__row">
+                  <td class="admin-table__data">${actionLabel}</td>
+                  <td class="admin-table__data">${log.admin_id?.username || 'Sistema'}</td>
+                  <td class="admin-table__data">${log.target_type}</td>
+                  <td class="admin-table__data">${SmartAdmin.formatDate(log.created_at)}</td>
+                </tr>
+              `;
+            }).join('');
+          }
+
+          document.getElementById('admin-loading').style.display = 'none';
+          document.getElementById('admin-dashboard').style.display = 'block';
+        } catch (err) {
+          console.error('Error loading dashboard:', err);
+          SmartAdmin.showError('Error al cargar el dashboard');
+          document.getElementById('admin-loading').innerHTML = `
+            <div class="admin-empty-state">
+              <div style="font-size: 32px; margin-bottom: 16px;">Cargando</div>
+              <p style="margin: 0;">Error al cargar datos</p>
+              <button class="admin-btn admin-btn--primary" style="margin-top: 20px;" onclick="location.reload()">Reintentar</button>
+            </div>
+          `;
+        }
+      }
+
+      await loadDashboard();
+
+      document.getElementById('admin-logout-btn').addEventListener('click', () => {
+        SmartAdmin.logout();
+      });
+
+      document.getElementById('admin-exit-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.href = 'dashboard.html';
+      });
+
+      document.querySelector('.admin-topbar__actions button').addEventListener('click', () => {
+        loadDashboard();
+      });
+
+      document.getElementById('view-all-logs').addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('Modulo de auditoria completo en desarrollo. Accederas via la interfaz principal.');
+      });
+
+      const currentPage = 'dashboard';
+      document.querySelectorAll('.admin-sidebar__link').forEach((link) => {
+        link.classList.toggle('is-active', link.dataset.page === currentPage);
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <script>
+    // Aplica el tema guardado antes de pintar para evitar el destello blanco.
+    (function () {
+      try {
+        var theme = localStorage.getItem('smart-aula-theme') === 'dark' ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+        if (theme === 'dark') {
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', '#111827');
+        }
+      } catch (error) {}
+    })();
+  </script>
+  <meta name="application-name" content="Smart Aula">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Smart Aula">
+  <title>Sin conexión — Smart Aula</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+  <style>
+    .offline-page { min-height: 100vh; display: grid; place-items: center; padding: 1.25rem; }
+    .offline-panel { width: min(100%, 430px); text-align: center; }
+    .offline-logo { width: 72px; height: 72px; margin: 0 auto 1.25rem; }
+    .offline-title { margin-bottom: 0.5rem; font-size: clamp(1.5rem, 5vw, 2rem); }
+    .offline-copy { margin: 0 auto 1.5rem; color: var(--color-text-secondary); }
+  </style>
+</head>
+<body>
+  <main class="offline-page">
+    <section class="offline-panel" aria-labelledby="offline-title">
+      <img class="offline-logo" src="/assets/icons/logo-smart-aula.svg" alt="Smart Aula" width="72" height="72">
+      <h1 id="offline-title" class="offline-title">No tienes conexión</h1>
+      <p class="offline-copy">Puedes seguir usando las páginas disponibles sin conexión. Vuelve a intentarlo cuando recuperes Internet.</p>
+      <button type="button" class="btn btn--primary btn--lg" onclick="window.location.reload()">Volver a intentar</button>
+    </section>
+  </main>
+
+  <button type="button" id="theme-toggle-offline" class="theme-toggle theme-toggle--floating" aria-label="Cambiar tema">
+    <span class="theme-toggle__icon" aria-hidden="true"></span>
+  </button>
+  <script>
+    // Esta página no carga app.js, así que el botón de tema se maneja aquí.
+    (function () {
+      var button = document.getElementById('theme-toggle-offline');
+      var icon = button.querySelector('.theme-toggle__icon');
+      function render() {
+        var isDark = document.documentElement.dataset.theme === 'dark';
+        button.setAttribute('aria-pressed', String(isDark));
+        button.setAttribute('aria-label', isDark ? 'Activar modo claro' : 'Activar modo oscuro');
+        button.title = isDark ? 'Modo claro' : 'Modo oscuro';
+        icon.innerHTML = isDark
+          ? '<span aria-hidden="true">☀</span>'
+          : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/></svg>';
+      }
+      button.addEventListener('click', function () {
+        var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        try { localStorage.setItem('smart-aula-theme', next); } catch (error) {}
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', next === 'dark' ? '#111827' : '#2563eb');
+        render();
+      });
+      render();
+    })();
+  </script>
+</body>
+</html>

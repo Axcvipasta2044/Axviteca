@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <script>
+    // Aplica el tema guardado antes de pintar para evitar el destello blanco.
+    (function () {
+      try {
+        var theme = localStorage.getItem('smart-aula-theme') === 'dark' ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+        if (theme === 'dark') {
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', '#111827');
+        }
+      } catch (error) {}
+    })();
+  </script>
+  <meta name="application-name" content="Smart Aula">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Smart Aula">
+  <title>Colección — Smart Aula</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/pwa.css">
+  <script src="/js/pwa.js" defer></script>
+</head>
+<body data-page="collection">
+  <header class="navbar">
+    <div class="navbar__inner">
+      <a href="index.html" class="navbar__brand">
+        <span class="navbar__logo">SA</span>
+        Smart Aula
+      </a>
+      <nav class="navbar__nav" aria-label="Principal">
+        <a href="dashboard.html" class="navbar__link">Explorar</a>
+        <a href="categories.html" class="navbar__link">Categorías</a>
+        <a href="collections.html" class="navbar__link">Colecciones</a>
+        <a href="upload.html" class="navbar__link">Subir</a>
+      </nav>
+      <div class="navbar__actions">
+        <a href="login.html" id="nav-login" class="btn btn--ghost">Ingresar</a>
+        <a href="upload.html" id="nav-upload" class="btn btn--primary">Subir PDF</a>
+        <button type="button" class="navbar__toggle" aria-label="Menú" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="navbar__mobile">
+        <a href="dashboard.html">Explorar</a>
+        <a href="categories.html">Categorías</a>
+        <a href="collections.html">Colecciones</a>
+        <a href="upload.html">Subir PDF</a>
+        <a href="login.html" id="nav-login-mobile">Ingresar</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="collection-view-header">
+        <div>
+          <h1 id="collection-title" class="h2">Colección</h1>
+          <p id="collection-description" class="text-secondary"></p>
+          <p id="collection-meta" class="text-muted text-sm"></p>
+        </div>
+        <div class="flex gap-md">
+          <button type="button" id="collection-share" class="btn btn--secondary btn--sm">Copiar enlace</button>
+          <a href="collections.html" class="btn btn--primary btn--sm">Mis colecciones</a>
+        </div>
+      </div>
+      <div id="collection-documents"></div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/collection.js"></script>
+</body>
+</html>

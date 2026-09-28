@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="application-name" content="Smart Aula">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Smart Aula">
+  <title>Gestion de categorias - Admin Smart Aula</title>
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/pwa.css">
+  <script src="/js/pwa.js" defer></script>
+</head>
+<body>
+  <div class="admin-wrapper">
+    <aside class="admin-sidebar" id="admin-sidebar">
+      <div class="admin-sidebar__header">
+        <a href="../admin.html" class="admin-sidebar__logo">
+          <div class="admin-sidebar__logo-icon"><img src="../assets/icons/logo-smart-aula.svg" alt="Smart Aula"></div>
+          <span>Smart Aula</span>
+        </a>
+      </div>
+
+      <nav class="admin-sidebar__nav">
+        <li class="admin-sidebar__item">
+          <a href="../admin.html" class="admin-sidebar__link" data-page="dashboard">
+            <span class="admin-sidebar__icon">DB</span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="admin-sidebar__item">
+          <a href="users.html" class="admin-sidebar__link" data-page="users">
+            <span class="admin-sidebar__icon">US</span>
+            <span>Usuarios</span>
+          </a>
+        </li>
+        <li class="admin-sidebar__item">
+          <a href="documents.html" class="admin-sidebar__link" data-page="documents">
+            <span class="admin-sidebar__icon">PDF</span>
+            <span>Documentos</span>
+          </a>
+        </li>
+        <li class="admin-sidebar__item">
+          <a href="categories.html" class="admin-sidebar__link is-active" data-page="categories">
+            <span class="admin-sidebar__icon">CAT</span>
+            <span>Categorias</span>
+          </a>
+        </li>
+      </nav>
+
+      <div class="admin-sidebar__footer">
+        <div id="admin-user-card" class="admin-user-card">
+          <div class="admin-user-avatar" id="admin-avatar">AD</div>
+          <div class="admin-user-info">
+            <span class="admin-user-name" id="admin-username">Cargando...</span>
+            <span class="admin-user-role" id="admin-role-display">-</span>
+          </div>
+        </div>
+        <a href="../dashboard.html" id="admin-exit-btn" class="admin-btn admin-btn--secondary admin-btn--sm admin-btn--block">Volver al sitio</a>
+        <button class="admin-btn admin-btn--danger admin-btn--sm admin-btn--block" id="admin-logout-btn">Cerrar sesion</button>
+      </div>
+    </aside>
+
+    <div class="admin-overlay" id="admin-overlay"></div>
+
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <button type="button" class="admin-topbar__menu" id="admin-menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="admin-sidebar">
+          <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+        </button>
+        <h1 class="admin-topbar__title">Gestion de categorias</h1>
+        <div class="admin-topbar__actions">
+          <button class="admin-btn admin-btn--primary" id="add-category-btn">Nueva categoria</button>
+          <button class="admin-btn--icon" id="refresh-categories" title="Actualizar" aria-label="Actualizar"></button>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div id="categories-loading" class="admin-empty-state">
+          <div style="font-size: 32px; margin-bottom: 16px;">Cargando</div>
+          <p style="margin: 0;">Cargando categorias...</p>
+        </div>
+
+        <div id="categories-content" style="display: none;">
+          <div class="admin-card">
+            <div class="admin-card__header">
+              <div>
+                <h2 class="admin-card__title">Categorias</h2>
+                <p class="admin-card__subtitle" id="categories-count">0 categorias</p>
+              </div>
+            </div>
+            <div id="categories-grid" class="admin-category-grid"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="modal-category" class="admin-modal-overlay" style="display: none;">
+    <div class="admin-modal">
+      <div class="admin-modal__header">
+        <h2 class="admin-modal__title" id="modal-title">Nueva categoria</h2>
+        <button class="admin-modal__close" onclick="closeCategoryModal()">x</button>
+      </div>
+      <div class="admin-modal__body">
+        <div class="admin-form-group">
+          <label class="admin-label">Nombre de la categoria</label>
+          <input type="text" id="category-name" class="admin-input" placeholder="Ej: Tecnologia">
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Icono (imagen)</label>
+          <input type="text" id="category-icon" class="admin-input" placeholder="Ej: assets/icons/cat-tecnologia.svg">
+        </div>
+      </div>
+      <div class="admin-modal__footer">
+        <button class="admin-btn admin-btn--secondary" onclick="closeCategoryModal()">Cancelar</button>
+        <button class="admin-btn admin-btn--primary" id="confirm-category">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/supabase.js"></script>
+  <script src="../js/admin.js"></script>
+
+  <script>
+    let allCategories = [];
+    let selectedCategoryId = null;
+    let isEditMode = false;
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str ?? '';
+      return div.innerHTML;
+    }
+
+    function isImageIcon(icon) {
+      const value = String(icon || '');
+      return /^(https?:|data:image\/|assets\/|\.\.\/|\.\/|\/)/i.test(value) || /\.(svg|png|jpe?g|webp|gif)$/i.test(value);
+    }
+
+    function renderCategoryIcon(icon, name) {
+      const safeIcon = icon || 'assets/icons/cat-general.svg';
+      if (isImageIcon(safeIcon)) {
+        const normalizedIcon = safeIcon.startsWith('assets/') ? `../${safeIcon}` : safeIcon;
+        return `<img src="${escapeHtml(normalizedIcon)}" alt="${escapeHtml(name)}">`;
+      }
+      return escapeHtml(safeIcon);
+    }
+
+    async function initCategoriesPage() {
+      const hasAccess = await SmartAdmin.init();
+      if (!hasAccess) return;
+
+      const user = SmartAdmin.getCurrentUser();
+      const profile = await SmartDB.getProfile(user.id);
+      SmartAdmin.hydrateChrome(profile, {
+        roleLabel: SmartAdmin.isSuperAdmin() ? 'Superadmin' : 'Admin',
+      });
+
+      await loadCategories();
+
+      document.getElementById('refresh-categories').addEventListener('click', loadCategories);
+      document.getElementById('add-category-btn').addEventListener('click', openCategoryModal);
+
+      document.getElementById('admin-logout-btn').addEventListener('click', () => {
+        SmartAdmin.logout();
+      });
+
+      document.getElementById('admin-exit-btn')?.addEventListener('click', (event) => {
+        event.preventDefault();
+        window.location.href = '../dashboard.html';
+      });
+    }
+
+    async function loadCategories() {
+      try {
+        document.getElementById('categories-loading').style.display = 'flex';
+        document.getElementById('categories-content').style.display = 'none';
+
+        allCategories = await SmartAdmin.getCategories();
+
+        renderCategories();
+
+        document.getElementById('categories-loading').style.display = 'none';
+        document.getElementById('categories-content').style.display = 'block';
+      } catch (err) {
+        console.error('Error loading categories:', err);
+        SmartAdmin.showError('Error al cargar categorias');
+      }
+    }
+
+    function renderCategories() {
+      const grid = document.getElementById('categories-grid');
+      const count = document.getElementById('categories-count');
+
+      count.textContent = `${allCategories.length} categoria${allCategories.length !== 1 ? 's' : ''}`;
+
+      if (allCategories.length === 0) {
+        grid.innerHTML = '<div class="admin-empty-state" style="grid-column: 1/-1;">No hay categorias creadas</div>';
+        return;
+      }
+
+      grid.innerHTML = allCategories.map((cat) => `
+        <div class="admin-category-card">
+          <div class="admin-category-card__icon">
+            ${renderCategoryIcon(cat.icon, cat.name)}
+          </div>
+          <div class="admin-category-card__title">${escapeHtml(cat.name)}</div>
+          <div class="admin-category-card__actions">
+            <button class="admin-btn admin-btn--sm admin-btn--secondary" onclick="editCategory('${cat.id}')">Editar</button>
+            <button class="admin-btn admin-btn--sm admin-btn--danger" onclick="deleteCategory('${cat.id}')">Eliminar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openCategoryModal() {
+      isEditMode = false;
+      selectedCategoryId = null;
+      document.getElementById('modal-title').textContent = 'Nueva categoria';
+      document.getElementById('category-name').value = '';
+      document.getElementById('category-icon').value = 'assets/icons/cat-general.svg';
+      document.getElementById('modal-category').style.display = 'flex';
+    }
+
+    function editCategory(catId) {
+      const cat = allCategories.find((category) => category.id === catId);
+      if (!cat) return;
+
+      isEditMode = true;
+      selectedCategoryId = catId;
+      document.getElementById('modal-title').textContent = 'Editar categoria';
+      document.getElementById('category-name').value = cat.name;
+      document.getElementById('category-icon').value = cat.icon;
+      document.getElementById('modal-category').style.display = 'flex';
+    }
+
+    function closeCategoryModal() {
+      document.getElementById('modal-category').style.display = 'none';
+      selectedCategoryId = null;
+      isEditMode = false;
+    }
+
+    document.getElementById('confirm-category').addEventListener('click', async () => {
+      const name = document.getElementById('category-name').value.trim();
+      const icon = document.getElementById('category-icon').value.trim();
+
+      if (!name) {
+        SmartAdmin.showError('El nombre es obligatorio');
+        return;
+      }
+
+      try {
+        if (isEditMode && selectedCategoryId) {
+          await SmartAdmin.updateCategory(selectedCategoryId, name, icon);
+        } else {
+          await SmartAdmin.createCategory(name, icon);
+        }
+        await loadCategories();
+        closeCategoryModal();
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    });
+
+    async function deleteCategory(catId) {
+      try {
+        await SmartAdmin.deleteCategory(catId);
+        await loadCategories();
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    }
+
+    initCategoriesPage();
+  </script>
+</body>
+</html>

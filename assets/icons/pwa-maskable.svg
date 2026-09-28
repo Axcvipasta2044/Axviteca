@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Smart Aula</title>
+  <desc id="desc">Libro abierto de Smart Aula</desc>
+  <rect width="512" height="512" fill="#2563eb"/>
+  <path d="M142 185c0-16 14-28 30-25 34 7 62 20 84 39v194c-25-19-54-31-89-38-14-3-25-16-25-31V185Z" fill="#fff"/>
+  <path d="M370 185c0-16-14-28-30-25-34 7-62 20-84 39v194c25-19 54-31 89-38 14-3 25-16 25-31V185Z" fill="#dbeafe"/>
+  <path d="M256 199v194" fill="none" stroke="#1e40af" stroke-width="16" stroke-linecap="round" opacity=".45"/>
+  <path d="M178 224c22 4 41 12 57 22M178 269c20 4 37 10 52 19" fill="none" stroke="#2563eb" stroke-width="14" stroke-linecap="round" opacity=".75"/>
+  <circle cx="349" cy="171" r="33" fill="#eff6ff"/>
+  <circle cx="383" cy="270" r="33" fill="#eff6ff"/>
+  <circle cx="307" cy="281" r="33" fill="#eff6ff"/>
+  <path d="m333 199-17 50M359 201l15 37" fill="none" stroke="#93c5fd" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="349" cy="171" r="13" fill="#2563eb"/>
+  <circle cx="383" cy="270" r="13" fill="#2563eb"/>
+  <circle cx="307" cy="281" r="13" fill="#2563eb"/>
+</svg>
